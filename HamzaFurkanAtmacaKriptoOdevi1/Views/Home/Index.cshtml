@@ -1,0 +1,286 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<script>
+        function alpha(e) {
+            var k;
+            document.all ? k = e.keyCode : k = e.which;
+            return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+        }
+
+        function limit(element) {
+            var max_chars = 3;
+
+            if (element.value.length > max_chars) {
+                element.value = element.value.substr(0, max_chars);
+            }
+        }
+
+    function sifrele() {
+        if (($("#txtPlainText").val() == "" || $("#txtPlainText").val() == null) || ($("#txtKey").val() == "" || $("#txtKey").val() == null)) {
+            alert("Plain Text veya Key boş olamaz.");
+        } else {
+                    var data = {
+            plainText: $("#txtPlainText").val()
+            , key: $("#txtKey").val()
+        };
+                    $.ajax({
+                type: "POST",
+                url: '@Url.Action("Sifrele","Home")',
+                data:  JSON.stringify(data) ,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    console.log(res);
+                    $("#txtCipherText").val(res.Message);
+                },
+                error: function () {
+                    alert("Bir hata oldu.");
+                }
+            });
+        }
+
+    }
+
+    function coz() {
+        if (($("#txtCipherText").val() == "" || $("#txtCipherText").val() == null) || ($("#txtKey").val() == "" || $("#txtKey").val() == null)) {
+            alert("Cipher Text veya Key boş olamaz.");
+        } else {
+                    var data = {
+                        cipherText: $("#txtCipherText").val()
+            , key: $("#txtKey").val()
+        };
+                    $.ajax({
+                type: "POST",
+                url: '@Url.Action("Coz","Home")',
+                data:  JSON.stringify(data) ,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    console.log(res);
+                    $("#txtPlainText").val(res.Message);
+                },
+                error: function () {
+                    alert("Bir hata oldu.");
+                }
+            });
+        }
+
+    }
+
+    function cozForRef() {
+        if (($("#txtPlainText").val() == "" || $("#txtPlainText").val() == null) || ($("#txtReferansMetin").val() == "" || $("#txtReferansMetin").val() == null) || ($("#txtCipherText").val() == "" || $("#txtCipherText").val() == null) || ($("#txtKey").val() == "" || $("#txtKey").val() == null)) {
+            alert("Plain Text, Cipher Text, Key veya Referans Metin boş olamaz.");
+        } else {
+                    var data = {
+                        cipherText: $("#txtCipherText").val(),
+                        plainText: $("#txtPlainText").val(),
+                        referansMetin: $("#txtReferansMetin").val(),
+                        key: $("#txtKey").val()
+        };
+                    $.ajax({
+                type: "POST",
+                url: '@Url.Action("Coz","Home")',
+                data:  JSON.stringify(data) ,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    console.log(res);
+                    $("#txtPlainText").val(res.Message);
+                },
+                error: function () {
+                    alert("Bir hata oldu.");
+                }
+            });
+        }
+
+    }
+
+    function harfSiklikAnalizi() {
+        if (($("#txtCipherText").val() == "" || $("#txtCipherText").val() == null)) {
+            alert("Cipher Text boş olamaz.");
+        } else {
+                    var data = {
+                        cipherText: $("#txtCipherText").val()
+        };
+                    $.ajax({
+                type: "POST",
+                url: '@Url.Action("HarfSiklikAnalizi", "Home")',
+                data:  JSON.stringify(data) ,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    console.log(res);
+                    var obj = JSON.parse(res.Message);
+                    console.log(obj);
+
+                    var tempObject = [];
+
+                    let entries = Object.entries(obj)
+                    let data = entries.map(([key, val] = entry) => {
+                        tempObject.push({ key:key,val:val});
+                    });
+                    console.log(tempObject);
+
+                    var xValues = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+                    var yValues = [];
+                    xValues.forEach(x => {
+                        var foundedObject = tempObject.find(e => e.key == x);
+                        if (foundedObject != undefined) {
+                            yValues.push(foundedObject.val);
+                        }
+                        else {
+                            yValues.push(0);
+                        }
+                    });
+                    console.log(yValues);
+
+                    var barColors = ["red", "green", "blue", "orange", "brown", "red", "green", "blue", "orange", "brown", "red", "green", "blue", "orange", "brown", "red", "green", "blue", "orange", "brown", "red", "green", "blue", "orange", "brown","red"];
+
+                    new Chart("myChart", {
+                        type: "bar",
+                        data: {
+                            labels: xValues,
+                            datasets: [{
+                                backgroundColor: barColors,
+                                data: yValues
+                            }]
+                        },
+                        options: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: "Şifrelenmiş Metin Harf Sıklık Analizi"
+                            }
+                        }
+                    });
+                },
+                error: function () {
+                    alert("Bir hata oldu.");
+                }
+            });
+        }
+
+    }
+    function harfSiklikAnaliziForRef() {
+        if (($("#txtReferansMetin").val() == "" || $("#txtReferansMetin").val() == null)) {
+            alert("Referans metin boş olamaz.");
+        } else {
+                    var data = {
+                        cipherText: $("#txtReferansMetin").val()
+        };
+                    $.ajax({
+                type: "POST",
+                url: '@Url.Action("HarfSiklikAnalizi", "Home")',
+                data:  JSON.stringify(data) ,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    console.log(res);
+                    var obj = JSON.parse(res.Message);
+                    console.log(obj);
+
+                    var tempObject = [];
+
+                    let entries = Object.entries(obj)
+                    let data = entries.map(([key, val] = entry) => {
+                        tempObject.push({ key:key,val:val});
+                    });
+                    console.log(tempObject);
+
+                    var xValues = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+                    var yValues = [];
+                    xValues.forEach(x => {
+                        var foundedObject = tempObject.find(e => e.key == x);
+                        if (foundedObject != undefined) {
+                            yValues.push(foundedObject.val);
+                        }
+                        else {
+                            yValues.push(0);
+                        }
+                    });
+                    console.log(yValues);
+
+                    var barColors = ["red", "green", "blue", "orange", "brown", "red", "green", "blue", "orange", "brown", "red", "green", "blue", "orange", "brown", "red", "green", "blue", "orange", "brown", "red", "green", "blue", "orange", "brown","red"];
+
+                    new Chart("refChart", {
+                        type: "bar",
+                        data: {
+                            labels: xValues,
+                            datasets: [{
+                                backgroundColor: barColors,
+                                data: yValues
+                            }]
+                        },
+                        options: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: "Referans Metin Harf Sıklık Analizi"
+                            }
+                        }
+                    });
+                },
+                error: function () {
+                    alert("Bir hata oldu.");
+                }
+            });
+        }
+
+    }
+
+</script>
+
+<div class="jumbotron">
+    <h3>2023 BLM5101 - Bilgisayar Güvenliği ve Kriptografi Ödevi</h3>
+    <div class="row">
+        <div class="col-md-1"><b>PlainText</b></div>
+        <div class="col-md-2">
+            <input ID="txtPlainText" onkeypress="return alpha(event)" />
+        </div>
+    </div>       <br />
+    <div class="row">
+        <div class="col-md-1"><b>Key</b></div>
+        <div class="col-md-2">
+            <input type="number" id="txtKey" min="1" max="999" onkeydown="limit(this);" onkeyup="limit(this);" />
+        </div>
+    </div><br />
+    <div class="row">
+        <div class="col-md-1"><b>CipherText</b></div>
+        <div class="col-md-2">
+            <input ID="txtCipherText" />
+        </div>
+    </div><br />
+    <div class="row">
+        <div class="col-md-1"><b>Referans Metin</b></div>
+        <div class="col-md-2">
+            <input ID="txtReferansMetin" />
+        </div>
+    </div><br />
+    <div class="row">
+        <div class="col-md-2">
+            <input type="button" value="Sezar ile Şifrele" onclick="sifrele()" />
+        </div>
+        <div class="col-md-2">
+            <input type="button" value="Sezar ile Çöz" onclick="coz()" />
+        </div>
+        <div class="col-md-2">
+            <input type="button" value="Şifrelenmiş Metin İçin Harf Sıklık Analizi" onclick="harfSiklikAnalizi()" />
+        </div>
+    </div><br/>
+    <div class="row">
+        <div class="col-md-2">
+            <input type="button" value="Referans Metin İçin Harf Sıklık Analizi" onclick="harfSiklikAnaliziForRef()" />
+        </div>     
+        <div class="col-md-2">
+            <input type="button" value="Referans Metin İle Çöz" onclick="cozForRef()" />
+        </div>
+    </div>
+    <div class="row">
+        <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+    </div>
+    <div class="row">
+        <canvas id="refChart" style="width:100%;max-width:600px"></canvas>
+    </div>
+</div>
