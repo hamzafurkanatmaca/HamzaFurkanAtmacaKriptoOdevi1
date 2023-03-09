@@ -124,6 +124,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\CozForRefRequestModel.cs" />
     <Compile Include="Models\cozRequestModel.cs" />
     <Compile Include="Models\harfSiklikAnaliziRequestModel.cs" />
     <Compile Include="Models\sifreleRequestModel.cs" />
