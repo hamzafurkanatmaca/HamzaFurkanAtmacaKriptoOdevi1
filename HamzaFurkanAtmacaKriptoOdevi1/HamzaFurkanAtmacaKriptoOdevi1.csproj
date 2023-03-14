@@ -124,10 +124,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BasariHesaplamasiRequestModel.cs" />
     <Compile Include="Models\CozForRefRequestModel.cs" />
     <Compile Include="Models\cozRequestModel.cs" />
     <Compile Include="Models\harfSiklikAnaliziRequestModel.cs" />
     <Compile Include="Models\sifreleRequestModel.cs" />
+    <Compile Include="Models\TahminYapRequestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

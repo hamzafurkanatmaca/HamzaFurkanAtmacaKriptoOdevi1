@@ -70,24 +70,76 @@
     }
 
     function cozForRef() {
-        if (($("#txtPlainText").val() == "" || $("#txtPlainText").val() == null) || ($("#txtReferansMetin").val() == "" || $("#txtReferansMetin").val() == null) || ($("#txtCipherText").val() == "" || $("#txtCipherText").val() == null) || ($("#txtKey").val() == "" || $("#txtKey").val() == null)) {
-            alert("Plain Text, Cipher Text, Key veya Referans Metin boş olamaz.");
+        if (($("#txtPlainText").val() == "" || $("#txtPlainText").val() == null) || ($("#txtReferansMetin").val() == "" || $("#txtReferansMetin").val() == null) || ($("#txtKey").val() == "" || $("#txtKey").val() == null)) {
+            alert("Plain Text, Key veya Referans Metin boş olamaz.");
         } else {
                     var data = {
-                        cipherText: $("#txtCipherText").val(),
+                        cipherText: "",
                         plainText: $("#txtPlainText").val(),
                         referansMetin: $("#txtReferansMetin").val(),
                         key: $("#txtKey").val()
         };
                     $.ajax({
                 type: "POST",
-                url: '@Url.Action("Coz","Home")',
+                url: '@Url.Action("CozForRef", "Home")',
                 data:  JSON.stringify(data) ,
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
                 success: function (res) {
                     console.log(res);
-                    $("#txtPlainText").val(res.Message);
+                    $("#txtReferansIleCozulmusMetin").val(res.Message);
+                    $("#txtReferansOrijinalMetin").val($("#txtPlainText").val().replace(/\s/g, '').replace(/[^a-zA-Z0-9 ]/g, '').replace(/[0-9]/g, '').toLowerCase());
+                },
+                error: function () {
+                    alert("Bir hata oldu.");
+                }
+            });
+        }
+
+    }
+
+    function basariHesapla() {
+        if (($("#txtReferansOrijinalMetin").val() == "" || $("#txtReferansOrijinalMetin").val() == null) || ($("#txtReferansIleCozulmusMetin").val() == "" || $("#txtReferansIleCozulmusMetin").val() == null)) {
+            alert("Referans Orijinal Metin veya Referans Çözülmüş Metin boş olamaz.");
+        } else {
+                    var data = {
+                        referansOrijinalMetin: $("#txtReferansOrijinalMetin").val(),
+                        referansCozulmusMetin: $("#txtReferansIleCozulmusMetin").val(),
+                    };
+                    $.ajax({
+                type: "POST",
+                url: '@Url.Action("BasariHesaplamasi", "Home")',
+                data:  JSON.stringify(data) ,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    console.log(res);
+                    $("#txtBasari").val(res.Message);
+                },
+                error: function () {
+                    alert("Bir hata oldu.");
+                }
+            });
+        }
+
+    }
+
+    function tahminYap() {
+        if (($("#txtCipherText").val() == "" || $("#txtCipherText").val() == null)) {
+            alert("Cipher text boş olamaz.");
+        } else {
+                    var data = {
+                        cipherText: $("#txtCipherText").val().replace(/\s/g, '').replace(/[^a-zA-Z0-9 ]/g, '').replace(/[0-9]/g, '').toLowerCase(),
+                    };
+                    $.ajax({
+                type: "POST",
+                url: '@Url.Action("TahminYap", "Home")',
+                data:  JSON.stringify(data) ,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (res) {
+                    console.log(res);
+                    $("#txtTahmin").val(res.Message);
                 },
                 error: function () {
                     alert("Bir hata oldu.");
@@ -257,6 +309,30 @@
         <div class="col-md-2">
             <input ID="txtReferansMetin" />
         </div>
+    </div><br />  
+    <div class="row">
+        <div class="col-md-1"><b>Referans İçin Orijinal Metin(Boşluksuz)</b></div>
+        <div class="col-md-2">
+            <input ID="txtReferansOrijinalMetin" />
+        </div>
+    </div><br />   
+    <div class="row">
+        <div class="col-md-1"><b>Referans ile Çözülmüş Metin(Boşluksuz)</b></div>
+        <div class="col-md-2">
+            <input ID="txtReferansIleCozulmusMetin" />
+        </div>
+    </div><br />   
+    <div class="row">
+        <div class="col-md-1"><b>Başarı</b></div>
+        <div class="col-md-2">
+            <input ID="txtBasari" readonly />
+        </div>
+    </div><br />    
+    <div class="row">
+        <div class="col-md-1"><b>Tahmin</b></div>
+        <div class="col-md-2">
+            <input ID="txtTahmin" readonly />
+        </div>
     </div><br />
     <div class="row">
         <div class="col-md-2">
@@ -269,14 +345,20 @@
             <input type="button" value="Şifrelenmiş Metin İçin Harf Sıklık Analizi" onclick="harfSiklikAnalizi()" />
         </div>
     </div><br/>
-    <div class="row">
-        <div class="col-md-3">
-            <input type="button" value="Referans Metin İçin Harf Sıklık Analizi" onclick="harfSiklikAnaliziForRef()" />
-        </div>     
-        <div class="col-md-3">
-            <input type="button" value="Referans Metin İle Çöz" onclick="cozForRef()" />
-        </div>
-    </div>
+          <div class="row">
+              <div class="col-md-3">
+                  <input type="button" value="Referans Metin İçin Harf Sıklık Analizi" onclick="harfSiklikAnaliziForRef()" />
+              </div>
+              <div class="col-md-3">
+                  <input type="button" value="Referans Metin İle Çöz" onclick="cozForRef()" />
+              </div>
+              <div class="col-md-3">
+                  <input type="button" value="Başarıyı Hesapla" onclick="basariHesapla()" />
+              </div>       
+              <div class="col-md-3">
+                  <input type="button" value="Tahmin Yap" onclick="tahminYap()" />
+              </div>
+          </div>
     <div class="row">
         <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
     </div>
