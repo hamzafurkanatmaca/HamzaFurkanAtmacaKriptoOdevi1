@@ -202,7 +202,7 @@ namespace HamzaFurkanAtmacaKriptoOdevi1.Controllers
                 double basariYuzdesi2 = (double)basariYuzdesi / req.referansOrijinalMetin.Length;
                 double basariYuzdesi3 = (double)basariYuzdesi2 * 100;
                 int basariYuzdesi4 = Convert.ToInt32(basariYuzdesi3);
-                return Json(new { Message =req.referansOrijinalMetin.Length+" har üzerinden "+ fark +" Hata. Başarı: %"+basariYuzdesi4, JsonRequestBehavior.AllowGet });
+                return Json(new { Message =req.referansOrijinalMetin.Length+" harf üzerinden "+ fark +" Hata. Başarı: %"+basariYuzdesi4, JsonRequestBehavior.AllowGet });
             }
             catch (Exception ex)
             {
